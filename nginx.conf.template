@@ -1,0 +1,15 @@
+server {
+  listen 80;
+  root /usr/share/nginx/html;
+
+  location /api/ {
+    # nginx sends the upstream's own name as Host, which is what the sidecar
+    # routes by. Don't set Host to the browser's.
+    proxy_pass ${API_UPSTREAM};
+  }
+
+  # The OIDC callback, and any other client-side route.
+  location / {
+    try_files $uri /index.html;
+  }
+}
