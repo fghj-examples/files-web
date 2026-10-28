@@ -2,6 +2,7 @@ version: "2.0"
 
 include:
   api: https://github.com/fghj-examples/files-api.git
+  worker: https://github.com/fghj-examples/files-worker.git
 
 services:
   web:
@@ -22,4 +23,10 @@ services:
       # need TLS to get there.
       API_UPSTREAM: http://${FGHJ_SERVICE_FQDN_HTTP:api/api}
     depends_on:
-      api: {}
+      api/app: {}
+
+flows:
+  # Log in, upload, download. No thumbnails: the jobs wait in Redis.
+  browse: [web]
+  # Everything, plus the sample files.
+  full: [web, worker/thumbnails, api/demo]
